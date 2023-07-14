@@ -1,5 +1,9 @@
 ### ClickHouse Keeper vs ZooKeeper
 
+Briefly: ZooKeeper is faster (2-4x)
+
+#### TL;DR;
+
 This is the comparison of ClickHouse Keeper vs ZooKeeper under ClickHouse load:
 
 type|concurrency|time|max coordinator latency (ms)
