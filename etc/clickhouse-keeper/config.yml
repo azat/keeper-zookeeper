@@ -1,0 +1,25 @@
+---
+listen_host: "0.0.0.0"
+max_connections: 128
+
+logger:
+    level: information
+    log: /var/lib/clickhouse/clickhouse-keeper.log
+    errorlog: /dev/null
+    console: 0
+
+keeper_server:
+    # same as ZooKeeper
+    tcp_port: 2181
+
+    log_storage_path: /var/lib/clickhouse/coordination/logs
+    snapshot_storage_path: /var/lib/clickhouse/coordination/snapshots
+
+    coordination_settings:
+        operation_timeout_ms: 10000
+        min_session_timeout_ms: 10000
+        session_timeout_ms: 100000
+        # raft_logs_level: information
+        # force_sync: false
+        #
+        # TODO: try other settings

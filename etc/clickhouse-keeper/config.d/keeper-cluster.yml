@@ -1,0 +1,16 @@
+---
+keeper_server:
+    server_id:
+        - '@from_env': KEEPER_ID
+
+    raft_configuration:
+        server:
+            - id: 1
+              hostname: keeper1
+              port: 9234
+            - id: 2
+              hostname: keeper2
+              port: 9234
+            - id: 3
+              hostname: keeper3
+              port: 9234

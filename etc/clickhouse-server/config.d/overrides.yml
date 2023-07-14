@@ -1,0 +1,63 @@
+---
+logger:
+    log: /var/lib/clickhouse/clickhouse-server.log
+    errorlog: ""
+    console: 0
+
+# Enable this table for debugging purpose, since "mntr" in ClickHouse Keeper is
+# not as wide as in ZooKeeper (tested on 3.7 version).
+zookeeper_log: {}
+
+# for ON CLUSTER
+zookeeper:
+    - node:
+          host: keeper-standalone
+    - session_timeout_ms: 5000
+    - operation_timeout_ms: 5000
+
+auxiliary_zookeepers:
+    keeper_standalone:
+        - node:
+              host: keeper-standalone
+        - session_timeout_ms: 5000
+        - operation_timeout_ms: 5000
+    keeper_cluster:
+        - node:
+              host: keeper1
+        - node:
+              host: keeper2
+        - node:
+              host: keeper3
+        - session_timeout_ms: 5000
+        - operation_timeout_ms: 5000
+    zookeeper_standalone:
+        - node:
+              host: zookeeper-standalone
+        - session_timeout_ms: 5000
+        - operation_timeout_ms: 5000
+    zookeeper_cluster:
+        - node:
+              host: zookeeper1
+        - node:
+              host: zookeeper2
+        - node:
+              host: zookeeper3
+        - session_timeout_ms: 5000
+        - operation_timeout_ms: 5000
+
+remote_servers:
+    server1:
+        - node:
+              - host: server1
+    server2:
+        - node:
+              - host: server2
+    default:
+        - shard:
+              - replica:
+                    - host: server1
+                    - host: server2
+
+macros:
+    hostname:
+        - '@from_env': HOSTNAME

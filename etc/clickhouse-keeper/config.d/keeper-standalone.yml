@@ -1,0 +1,9 @@
+---
+keeper_server:
+    server_id: 1
+
+    raft_configuration:
+        server:
+            id: 1
+            hostname: localhost
+            port: 9234

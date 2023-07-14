@@ -1,0 +1,149 @@
+---
+version: '3.1'
+
+services:
+    #
+    # ClickHouse
+    #
+    server-base:
+        # Only until 23.4 there are InMemory data parts
+        # https://github.com/ClickHouse/ClickHouse/pull/49429
+        image: clickhouse/clickhouse-server:23.4
+        volumes:
+            - ./etc/clickhouse-server/config.d/overrides.yml:/etc/clickhouse-server/config.d/overrides.yml
+            - ./etc/clickhouse-server/users.d/overrides.yml:/etc/clickhouse-server/users.d/overrides.yml
+        depends_on:
+            - keeper-standalone
+            - keeper1
+            - keeper2
+            - keeper3
+            - zookeeper-standalone
+            - zookeeper1
+            - zookeeper2
+            - zookeeper3
+
+    server1:
+        extends: server-base
+        # For static replicas (since we use $HOSTNAME)
+        hostname: server1
+        volumes:
+            - ./data/clickhouse-server1:/var/lib/clickhouse
+    server2:
+        extends: server-base
+        # For static replicas (since we use $HOSTNAME)
+        hostname: server2
+        volumes:
+            - ./data/clickhouse-server2:/var/lib/clickhouse
+
+    #
+    # Keeper
+    #
+    keeper-base:
+        # But we use latest clickhouse-server image for keeper
+        image: clickhouse/clickhouse-server
+        volumes:
+            - ./etc/clickhouse-keeper/config.yml:/etc/clickhouse-keeper/config.yml
+        command: clickhouse-keeper -C /etc/clickhouse-keeper/config.yml
+    keeper-standalone:
+        extends: keeper-base
+        volumes:
+            - ./etc/clickhouse-keeper/config.d/keeper-standalone.yml:/etc/clickhouse-keeper/config.d/keeper-standalone.yml
+            - ./data/keeper-standalone:/var/lib/clickhouse
+    keeper1:
+        extends: keeper-base
+        environment:
+            KEEPER_ID: 1
+        volumes:
+            # - $BIN:/usr/bin/clickhouse
+            - ./data/keeper1:/var/lib/clickhouse
+            - ./etc/clickhouse-keeper/config.d/keeper-cluster.yml:/etc/clickhouse-keeper/config.d/keeper-cluster.yml
+    keeper2:
+        extends: keeper-base
+        environment:
+            KEEPER_ID: 2
+        volumes:
+            - ./data/keeper2:/var/lib/clickhouse
+            - ./etc/clickhouse-keeper/config.d/keeper-cluster.yml:/etc/clickhouse-keeper/config.d/keeper-cluster.yml
+    keeper3:
+        extends: keeper-base
+        environment:
+            KEEPER_ID: 3
+        volumes:
+            - ./data/keeper3:/var/lib/clickhouse
+            - ./etc/clickhouse-keeper/config.d/keeper-cluster.yml:/etc/clickhouse-keeper/config.d/keeper-cluster.yml
+
+    #
+    # ZooKeeper
+    #
+    zookeeper-base:
+        image: ${ZOOKEEPER_IMAGE:-zookeeper:3.7}
+        environment:
+            ZOO_CFG_EXTRA:
+                clientPort=2181
+                maxSessionTimeout=60000000
+                preAllocSize=131072
+                snapCount=3000000
+                ${ZOO_CFG_EXTRA:-}
+            # Just in case, replicate settings from production, though it does not changes a lot:
+            JVMFLAGS: -Xms4G -Xmx4G -XX:+AlwaysPreTouch -XX:MaxGCPauseMillis=50 -Dzookeeper.4lw.commands.whitelist=*
+            ZOO_SYNC_LIMIT: 10
+            ZOO_AUTOPURGE_PURGEINTERVAL: 1
+            ZOO_AUTOPURGE_SNAPRETAINCOUNT: 10
+            ZOO_MAX_CLIENT_CNXNS: 0
+    zookeeper-standalone:
+        extends: zookeeper-base
+    zookeeper1:
+        extends: zookeeper-base
+        environment:
+            ZOO_MY_ID: 1
+            ZOO_SERVERS: server.1=zookeeper1:2888:3888 server.2=zookeeper2:2888:3888 server.3=zookeeper3:2888:3888
+    zookeeper2:
+        extends: zookeeper-base
+        environment:
+            ZOO_MY_ID: 2
+            ZOO_SERVERS: server.1=zookeeper1:2888:3888 server.2=zookeeper2:2888:3888 server.3=zookeeper3:2888:3888
+    zookeeper3:
+        extends: zookeeper-base
+        environment:
+            ZOO_MY_ID: 3
+            ZOO_SERVERS: server.1=zookeeper1:2888:3888 server.2=zookeeper2:2888:3888 server.3=zookeeper3:2888:3888
+
+
+    #
+    # Benchmark
+    #
+    benchmark:
+        image: clickhouse/clickhouse-server
+        volumes:
+            - ./scripts:/scripts:ro
+        command:
+            - /bin/sh
+            - -c
+            - |
+                /scripts/benchmark.sh server1 server1 keeper-standalone keeper_standalone
+                /scripts/benchmark.sh server1 server1 keeper1 keeper_cluster
+
+                /scripts/benchmark.sh server1 default keeper-standalone keeper_standalone
+                /scripts/benchmark.sh server1 default keeper1 keeper_cluster
+
+                /scripts/benchmark.sh server1 server1 keeper-standalone keeper_standalone --concurrency 32
+                /scripts/benchmark.sh server1 server1 keeper1 keeper_cluster --concurrency 32
+
+                /scripts/benchmark.sh server1 default keeper-standalone keeper_standalone --concurrency 32
+                /scripts/benchmark.sh server1 default keeper1 keeper_cluster --concurrency 32
+
+                # run tests for ZooKeeper on server2 to have separate system.zookeeper_log
+                /scripts/benchmark.sh server2 server2 zookeeper-standalone zookeeper_standalone
+                /scripts/benchmark.sh server2 server2 zookeeper1 zookeeper_cluster
+
+                /scripts/benchmark.sh server2 default zookeeper-standalone zookeeper_standalone
+                /scripts/benchmark.sh server2 default zookeeper1 zookeeper_cluster
+
+                /scripts/benchmark.sh server2 server2 zookeeper-standalone zookeeper_standalone --concurrency 32
+                /scripts/benchmark.sh server2 server2 zookeeper1 zookeeper_cluster --concurrency 32
+
+                /scripts/benchmark.sh server2 default zookeeper-standalone zookeeper_standalone --concurrency 32
+                /scripts/benchmark.sh server2 default zookeeper1 zookeeper_cluster --concurrency 32
+        depends_on:
+            - server1
+            - server2
