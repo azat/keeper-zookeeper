@@ -100,7 +100,7 @@ function main()
     time clickhouse-benchmark "${bench_opts[@]}" |& grep -e Exception -e 'QPS:'
 
     # TODO: reset latency
-    clickhouse keeper-client --host "$zookeeper_host" <<<stat | grep Latency
+    clickhouse keeper-client --host "$zookeeper_host" --port 2181 <<<stat | grep Latency
 
     clickhouse-client --host "$server" -q "DROP TABLE IF EXISTS bench ON CLUSTER $cluster" >/dev/null
 }
