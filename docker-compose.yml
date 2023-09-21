@@ -76,7 +76,7 @@ services:
     # ZooKeeper
     #
     zookeeper-base:
-        image: ${ZOOKEEPER_IMAGE:-zookeeper:3.7}
+        image: ${ZOOKEEPER_IMAGE:-zookeeper:3.8}
         environment:
             ZOO_CFG_EXTRA:
                 clientPort=2181
