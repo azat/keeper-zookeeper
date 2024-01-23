@@ -40,7 +40,7 @@ services:
     #
     keeper-base:
         # But we use latest clickhouse-server image for keeper
-        image: clickhouse/clickhouse-server
+        image: clickhouse/clickhouse-server:23.12
         volumes:
             - ./etc/clickhouse-keeper/config.yml:/etc/clickhouse-keeper/config.yml
         command: clickhouse-keeper -C /etc/clickhouse-keeper/config.yml
