@@ -1,6 +1,7 @@
-### ClickHouse Keeper vs ZooKeeper
+### ClickHouse Keeper 23.12 vs ZooKeeper 3.8
 
-Briefly: ZooKeeper is faster (2-4x)
+- **2-4x** times slower, **3-7x** bigger **latency** in **single thread**
+- **1.3-2.4x** times slower **3-7** bigger **latency** with **32 threads**
 
 #### TL;DR;
 
@@ -8,43 +9,44 @@ This is the comparison of ClickHouse Keeper vs ZooKeeper under ClickHouse load:
 
 type|concurrency|time|max coordinator latency (ms)
 -|-|-|-
-ClickHouse 22.4 x1 + Keeper 22.6 x1|-|2m4s|119
-ClickHouse 22.4 x1 + Keeper 22.6 x3|-|4m29s|192
-ClickHouse 22.4 x2 + Keeper 22.6 x1|-|2m18s|210
-ClickHouse 22.4 x2 + Keeper 22.6 x3|-|5m20s|265
-ClickHouse 22.4 x1 + Keeper 22.6 x1|32|5.289s|210
-ClickHouse 22.4 x1 + Keeper 22.6 x3|32|14.341s|265
-ClickHouse 22.4 x2 + Keeper 22.6 x1|32|4.528s|210
-ClickHouse 22.4 x2 + Keeper 22.6 x3|32|15.023s|265
-ClickHouse 22.4 x1 + ZooKeeper 3.7 x1|-|30.590s|26
-ClickHouse 22.4 x1 + ZooKeeper 3.7 x3|-|55.080s|56
-ClickHouse 22.4 x2 + ZooKeeper 3.7 x1|-|26.928s|26
-ClickHouse 22.4 x2 + ZooKeeper 3.7 x3|-|1m22.483s|79
-ClickHouse 22.4 x1 + ZooKeeper 3.7 x1|32|3.227s|26
-ClickHouse 22.4 x1 + ZooKeeper 3.7 x3|32|4.253s|79
-ClickHouse 22.4 x2 + ZooKeeper 3.7 x1|32|2.324s|26
-ClickHouse 22.4 x2 + ZooKeeper 3.7 x3|32|4.262s|79
+ClickHouse 22.4 x1 + Keeper 23.12 x1|-|1m22.816s|128
+ClickHouse 22.4 x1 + Keeper 23.12 x3|-|2m41.186s|99
+ClickHouse 22.4 x2 + Keeper 23.12 x1|-|1m34.822s|128
+ClickHouse 22.4 x2 + Keeper 23.12 x3|-|3m3.516s|110
+ClickHouse 22.4 x1 + Keeper 23.12 x1|32|3.458s|128
+ClickHouse 22.4 x1 + Keeper 23.12 x3|32|6.975s|110
+ClickHouse 22.4 x2 + Keeper 23.12 x1|32|3.480s|128
+ClickHouse 22.4 x2 + Keeper 23.12 x3|32|12.408s|130
+ClickHouse 22.4 x1 + ZooKeeper 3.8 x1|-|22.320s|18
+ClickHouse 22.4 x1 + ZooKeeper 3.8 x3|-|37.801s|30
+ClickHouse 22.4 x2 + ZooKeeper 3.8 x1|-|25.693s|18
+ClickHouse 22.4 x2 + ZooKeeper 3.8 x3|-|47.412s|43
+ClickHouse 22.4 x1 + ZooKeeper 3.8 x1|32|2.504s|18
+ClickHouse 22.4 x1 + ZooKeeper 3.8 x3|32|5.325s|43
+ClickHouse 22.4 x2 + ZooKeeper 3.8 x1|32|2.839s|20
+ClickHouse 22.4 x2 + ZooKeeper 3.8 x3|32|5.277s|43
 
 *Please submit pull requests for newer versions of ClickHouse Keeper (note, that it does not make a lot of sense to try newer ClickHouse Server)*
 
 ### Latency comparison by operation
 
+*This results are for sequential run with single coordinator and single server*
+
 | op_num | count | zookeeper.count | duration_ms_q99 | zookeeper.duration_ms_q99 | slower |
 |:-|-:|-:|-:|-:|-:|
-| Watch | 1244 | 1225 | 0 | 0 | nan |
-| Create | 13582 | 13147 | 29048 | 11308 | 2.57 |
-| Remove | 13506 | 13027 | 113840 | 11164 | 10.2 |
-| Exists | 9489 | 6492 | 26680 | 10650 | 2.51 |
-| Get | 8728 | 8250 | 19834 | 8348 | 2.38 |
-| Set | 5442 | 4817 | 27352 | 10870 | 2.52 |
-| Sync | 4 | 2 | 12735 | 1239 | 10.28 |
-| Heartbeat | 233 | 227 | 0 | 0 | nan |
-| List | 5623 | 5077 | 27602 | 10893 | 2.53 |
-| Check | 15 | 4 | 27824 | 12753 | 2.18 |
-| Multi | 9967 | 6629 | 124594 | 10977 | 11.35 |
-| MultiRead | 2422 | 0 | 26384 | 0 | inf |
-
-*This results are for sequential run with single coordinator and single server*
+| Error | 524 | 684 | 98890 | 13278 | 7.45 |
+| Watch | 2520 | 2161 | 0 | 0 | nan |
+| Create | 55477 | 55190 | 25220 | 15914 | 1.58 |
+| Remove | 53954 | 51568 | 104224 | 15673 | 6.65 |
+| Exists | 21227 | 16339 | 23933 | 15517 | 1.54 |
+| Get | 28896 | 28103 | 19951 | 16158 | 1.23 |
+| Set | 10898 | 10064 | 23364 | 11531 | 2.03 |
+| Sync | 14 | 14 | 48393 | 1219 | 39.7 |
+| Heartbeat | 1240 | 561 | 0 | 0 | nan |
+| List | 26389 | 25430 | 20746 | 14227 | 1.46 |
+| Check | 131 | 118 | 98923 | 15655 | 6.32 |
+| Multi | 26764 | 21278 | 111836 | 15811 | 7.07 |
+| MultiRead | 4985 | 0 | 20284 | 0 | inf |
 
 <details>
 
@@ -65,9 +67,8 @@ FROM
         count() AS count,
         quantileExact(0.99)(duration_ms) AS duration_ms_q99
     FROM system.zookeeper_log
-    WHERE type = 'Response'
+    WHERE (type = 'Response') AND (address = '::ffff:172.19.0.9') /* host of standalone Keeper */
     GROUP BY 1
-    ORDER BY op_num ASC
 ) AS keeper
 LEFT JOIN
 (
@@ -76,27 +77,11 @@ LEFT JOIN
         count() AS count,
         quantileExact(0.99)(duration_ms) AS duration_ms_q99
     FROM remote('server2', system.zookeeper_log)
-    WHERE type = 'Response'
+    WHERE (type = 'Response') AND (address = '::ffff:172.19.0.2') /* host of standalone ZooKeeper */
     GROUP BY 1
-    ORDER BY op_num ASC
 ) AS zookeeper USING (op_num)
-
-Query id: c28ee173-0fec-4558-9f37-adacd3a0e362
-
-┌─op_num────┬─count─┬─zookeeper.count─┬─duration_ms_q99─┬─zookeeper.duration_ms_q99─┬─slower─┐
-│ Watch     │  1244 │            1225 │               0 │                         0 │    nan │
-│ Create    │ 13582 │           13147 │           29048 │                     11308 │   2.57 │
-│ Remove    │ 13506 │           13027 │          113840 │                     11164 │   10.2 │
-│ Exists    │  9490 │            6493 │           26680 │                     10650 │   2.51 │
-│ Get       │  8764 │            8306 │           19834 │                      8339 │   2.38 │
-│ Set       │  5442 │            4817 │           27352 │                     10870 │   2.52 │
-│ Sync      │     4 │               2 │           12735 │                      1239 │  10.28 │
-│ Heartbeat │   243 │             237 │               0 │                         0 │    nan │
-│ List      │  5652 │            5121 │           27602 │                     10892 │   2.53 │
-│ Check     │    15 │               4 │           27824 │                     12753 │   2.18 │
-│ Multi     │  9967 │            6629 │          124594 │                     10977 │  11.35 │
-│ MultiRead │  2422 │               0 │           26384 │                         0 │    inf │
-└───────────┴───────┴─────────────────┴─────────────────┴───────────────────────────┴────────┘
+ORDER BY op_num ASC
+FORMAT Markdown
 ```
 
 </details>
