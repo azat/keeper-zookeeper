@@ -3,6 +3,11 @@
 - **2-4x** times **slower**, **3-7x** bigger **latency** in **single thread**
 - **1.3-2.4x** times **slower** **3-7** bigger **latency** with **32 threads**
 
+### RaftKeeper vs ZooKeeper 3.8
+
+- **2x faster** in cluster setup with 32 threads
+- **5x slower** without concurrency
+
 #### TL;DR;
 
 This is the comparison of ClickHouse Keeper vs ZooKeeper under ClickHouse load:
@@ -25,8 +30,18 @@ ClickHouse 23.4 x1 + ZooKeeper 3.8 x1|32|2.504s|18
 ClickHouse 23.4 x1 + ZooKeeper 3.8 x3|32|5.325s|43
 ClickHouse 23.4 x2 + ZooKeeper 3.8 x1|32|2.839s|20
 ClickHouse 23.4 x2 + ZooKeeper 3.8 x3|32|5.277s|43
+ClickHouse 23.4 x1 + RaftKeeper x1|-|2m5.200s|43
+ClickHouse 23.4 x1 + RaftKeeper x3|-|2m9.299s|63
+ClickHouse 23.4 x2 + RaftKeeper x1|-|2m13.653s|59
+ClickHouse 23.4 x2 + RaftKeeper x3|-|2m12.078s|63
+ClickHouse 23.4 x1 + RaftKeeper x1|32|2.946s|59
+ClickHouse 23.4 x1 + RaftKeeper x3|32|2.879s|63
+ClickHouse 23.4 x2 + RaftKeeper x1|32|2.845s|59
+ClickHouse 23.4 x2 + RaftKeeper x3|32|2.867s|63
 
 *Please submit pull requests for newer versions of ClickHouse Keeper (note, that it does not make a lot of sense to try newer ClickHouse Server)*
+
+*RaftKeeper is based on [this](https://github.com/JDRaftKeeper/RaftKeeper/commit/163f3481ac80c4245f1ae2a103aef9f81d782a0a) commit*
 
 ### Latency comparison by operation
 
