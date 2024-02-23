@@ -94,6 +94,8 @@ function main()
         --min_insert_block_size_rows 1
         --insert_deduplicate 0
         --insert_keeper_max_retries 0
+
+        --log_comment "server=$server, cluster=$cluster, zookeeper_host=$zookeeper_host, zookeeper_name=$zookeeper_name, clickhouse-benchmark options=$*"
     )
     # NOTE: maybe in the meantime spawn chdig to show the queries?
     # NOTE: also we can calculate ZooKeeper metrics from system.zookeeper or via statistics from the ZooKeeper/Keeper
