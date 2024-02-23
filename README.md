@@ -9,22 +9,22 @@ This is the comparison of ClickHouse Keeper vs ZooKeeper under ClickHouse load:
 
 type|concurrency|time|max coordinator latency (ms)
 -|-|-|-
-ClickHouse 22.4 x1 + Keeper 23.12 x1|-|1m22.816s|128
-ClickHouse 22.4 x1 + Keeper 23.12 x3|-|2m41.186s|99
-ClickHouse 22.4 x2 + Keeper 23.12 x1|-|1m34.822s|128
-ClickHouse 22.4 x2 + Keeper 23.12 x3|-|3m3.516s|110
-ClickHouse 22.4 x1 + Keeper 23.12 x1|32|3.458s|128
-ClickHouse 22.4 x1 + Keeper 23.12 x3|32|6.975s|110
-ClickHouse 22.4 x2 + Keeper 23.12 x1|32|3.480s|128
-ClickHouse 22.4 x2 + Keeper 23.12 x3|32|12.408s|130
-ClickHouse 22.4 x1 + ZooKeeper 3.8 x1|-|22.320s|18
-ClickHouse 22.4 x1 + ZooKeeper 3.8 x3|-|37.801s|30
-ClickHouse 22.4 x2 + ZooKeeper 3.8 x1|-|25.693s|18
-ClickHouse 22.4 x2 + ZooKeeper 3.8 x3|-|47.412s|43
-ClickHouse 22.4 x1 + ZooKeeper 3.8 x1|32|2.504s|18
-ClickHouse 22.4 x1 + ZooKeeper 3.8 x3|32|5.325s|43
-ClickHouse 22.4 x2 + ZooKeeper 3.8 x1|32|2.839s|20
-ClickHouse 22.4 x2 + ZooKeeper 3.8 x3|32|5.277s|43
+ClickHouse 23.4 x1 + Keeper 23.12 x1|-|1m22.816s|128
+ClickHouse 23.4 x1 + Keeper 23.12 x3|-|2m41.186s|99
+ClickHouse 23.4 x2 + Keeper 23.12 x1|-|1m34.822s|128
+ClickHouse 23.4 x2 + Keeper 23.12 x3|-|3m3.516s|110
+ClickHouse 23.4 x1 + Keeper 23.12 x1|32|3.458s|128
+ClickHouse 23.4 x1 + Keeper 23.12 x3|32|6.975s|110
+ClickHouse 23.4 x2 + Keeper 23.12 x1|32|3.480s|128
+ClickHouse 23.4 x2 + Keeper 23.12 x3|32|12.408s|130
+ClickHouse 23.4 x1 + ZooKeeper 3.8 x1|-|22.320s|18
+ClickHouse 23.4 x1 + ZooKeeper 3.8 x3|-|37.801s|30
+ClickHouse 23.4 x2 + ZooKeeper 3.8 x1|-|25.693s|18
+ClickHouse 23.4 x2 + ZooKeeper 3.8 x3|-|47.412s|43
+ClickHouse 23.4 x1 + ZooKeeper 3.8 x1|32|2.504s|18
+ClickHouse 23.4 x1 + ZooKeeper 3.8 x3|32|5.325s|43
+ClickHouse 23.4 x2 + ZooKeeper 3.8 x1|32|2.839s|20
+ClickHouse 23.4 x2 + ZooKeeper 3.8 x3|32|5.277s|43
 
 *Please submit pull requests for newer versions of ClickHouse Keeper (note, that it does not make a lot of sense to try newer ClickHouse Server)*
 
