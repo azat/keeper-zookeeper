@@ -1,0 +1,16 @@
+<raftkeeper>
+    <cluster>
+        <server>
+            <id>1</id>
+            <host>raftkeeper1</host>
+        </server>
+        <server>
+            <id>2</id>
+            <host>raftkeeper2</host>
+        </server>
+        <server>
+            <id>3</id>
+            <host>raftkeeper3</host>
+        </server>
+    </cluster>
+</raftkeeper>

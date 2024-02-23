@@ -17,6 +17,10 @@ services:
             - keeper1
             - keeper2
             - keeper3
+            - raftkeeper-standalone
+            - raftkeeper1
+            - raftkeeper2
+            - raftkeeper3
             - zookeeper-standalone
             - zookeeper1
             - zookeeper2
@@ -34,6 +38,46 @@ services:
         hostname: server2
         volumes:
             - ./data/clickhouse-server2:/var/lib/clickhouse
+
+    #
+    # RaftKeeper
+    #
+    raftkeeper-base:
+        # glibc is enough
+        image: ubuntu
+        volumes:
+            - ./etc/raftkeeper-server/config.xml:/etc/raftkeeper-server/config.xml
+            - $RAFT_KEEPER_BIN:/usr/bin/raftkeeper
+        command: raftkeeper server -C /etc/raftkeeper-server/config.xml
+    raftkeeper-standalone:
+        extends: raftkeeper-base
+        volumes:
+            - ./etc/raftkeeper-server/config.d/raftkeeper-standalone.xml:/etc/raftkeeper-server/config.d/raftkeeper-standalone.xml
+            - ./data/raftkeeper-standalone:/var/lib/clickhouse
+        environment:
+            KEEPER_ID: 1
+    raftkeeper1:
+        extends: raftkeeper-base
+        environment:
+            KEEPER_ID: 1
+        volumes:
+            # - $BIN:/usr/bin/clickhouse
+            - ./data/raftkeeper1:/var/lib/clickhouse
+            - ./etc/raftkeeper-server/config.d/raftkeeper-cluster.xml:/etc/raftkeeper-server/config.d/raftkeeper-cluster.xml
+    raftkeeper2:
+        extends: raftkeeper-base
+        environment:
+            KEEPER_ID: 2
+        volumes:
+            - ./data/raftkeeper2:/var/lib/clickhouse
+            - ./etc/raftkeeper-server/config.d/raftkeeper-cluster.xml:/etc/raftkeeper-server/config.d/raftkeeper-cluster.xml
+    raftkeeper3:
+        extends: raftkeeper-base
+        environment:
+            KEEPER_ID: 3
+        volumes:
+            - ./data/raftkeeper3:/var/lib/clickhouse
+            - ./etc/raftkeeper-server/config.d/raftkeeper-cluster.xml:/etc/raftkeeper-server/config.d/raftkeeper-cluster.xml
 
     #
     # Keeper
@@ -120,6 +164,20 @@ services:
             - /bin/sh
             - -c
             - |
+                # RaftKeeper
+                /scripts/benchmark.sh server1 server1 raftkeeper-standalone raftkeeper_standalone
+                /scripts/benchmark.sh server1 server1 raftkeeper1 raftkeeper_cluster
+
+                /scripts/benchmark.sh server1 default raftkeeper-standalone raftkeeper_standalone
+                /scripts/benchmark.sh server1 default raftkeeper1 raftkeeper_cluster
+
+                /scripts/benchmark.sh server1 server1 raftkeeper-standalone raftkeeper_standalone --concurrency 32
+                /scripts/benchmark.sh server1 server1 raftkeeper1 raftkeeper_cluster --concurrency 32
+
+                /scripts/benchmark.sh server1 default raftkeeper-standalone raftkeeper_standalone --concurrency 32
+                /scripts/benchmark.sh server1 default raftkeeper1 raftkeeper_cluster --concurrency 32
+
+                # Keeper
                 /scripts/benchmark.sh server1 server1 keeper-standalone keeper_standalone
                 /scripts/benchmark.sh server1 server1 keeper1 keeper_cluster
 
@@ -132,6 +190,7 @@ services:
                 /scripts/benchmark.sh server1 default keeper-standalone keeper_standalone --concurrency 32
                 /scripts/benchmark.sh server1 default keeper1 keeper_cluster --concurrency 32
 
+                # ZooKeeper
                 # run tests for ZooKeeper on server2 to have separate system.zookeeper_log
                 /scripts/benchmark.sh server2 server2 zookeeper-standalone zookeeper_standalone
                 /scripts/benchmark.sh server2 server2 zookeeper1 zookeeper_cluster

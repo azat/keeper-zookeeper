@@ -1,0 +1,23 @@
+<raftkeeper>
+    <keeper>
+        <host>0.0.0.0</host>
+        <port>2181</port>
+        <my_id from_env="KEEPER_ID" />
+
+        <log_dir>/var/lib/clickhouse/coordination/logs</log_dir>
+        <snapshot_dir>/var/lib/clickhouse/coordination/snapshots</snapshot_dir>
+
+        <raft_settings>
+            <operation_timeout_ms>10000</operation_timeout_ms>
+            <min_session_timeout_ms>10000</min_session_timeout_ms>
+            <session_timeout_ms>100000</session_timeout_ms>
+        </raft_settings>
+    </keeper>
+
+    <logger>
+        <level>information</level>
+        <log>/var/lib/clickhouse/clickhouse-keeper.log</log>
+        <errorlog>/dev/null</errorlog>
+        <console>0</console>
+    </logger>
+</raftkeeper>

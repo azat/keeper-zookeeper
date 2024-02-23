@@ -16,6 +16,20 @@ zookeeper:
     - operation_timeout_ms: 5000
 
 auxiliary_zookeepers:
+    raftkeeper_standalone:
+        - node:
+              host: raftkeeper-standalone
+        - session_timeout_ms: 5000
+        - operation_timeout_ms: 5000
+    raftkeeper_cluster:
+        - node:
+              host: raftkeeper1
+        - node:
+              host: raftkeeper2
+        - node:
+              host: raftkeeper3
+        - session_timeout_ms: 5000
+        - operation_timeout_ms: 5000
     keeper_standalone:
         - node:
               host: keeper-standalone
