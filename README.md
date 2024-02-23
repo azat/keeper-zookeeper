@@ -1,7 +1,7 @@
 ### ClickHouse Keeper 23.12 vs ZooKeeper 3.8
 
-- **2-4x** times slower, **3-7x** bigger **latency** in **single thread**
-- **1.3-2.4x** times slower **3-7** bigger **latency** with **32 threads**
+- **2-4x** times **slower**, **3-7x** bigger **latency** in **single thread**
+- **1.3-2.4x** times **slower** **3-7** bigger **latency** with **32 threads**
 
 #### TL;DR;
 
