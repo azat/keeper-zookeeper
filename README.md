@@ -89,7 +89,7 @@ FORMAT Markdown
 ### Run
 
 ```sh
-docker-compose run --rm benchmark
+RAFT_KEEPER_BIN=/path/to/raftkeeper docker-compose run --rm benchmark
 ```
 
 ### Notes
