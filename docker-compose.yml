@@ -1,6 +1,21 @@
 ---
 version: '3.1'
 
+x-depends_on: &x-depends_on
+    depends_on:
+        - keeper-standalone
+        - keeper1
+        - keeper2
+        - keeper3
+        - raftkeeper-standalone
+        - raftkeeper1
+        - raftkeeper2
+        - raftkeeper3
+        - zookeeper-standalone
+        - zookeeper1
+        - zookeeper2
+        - zookeeper3
+
 services:
     #
     # ClickHouse
@@ -12,32 +27,20 @@ services:
         volumes:
             - ./etc/clickhouse-server/config.d/overrides.yml:/etc/clickhouse-server/config.d/overrides.yml
             - ./etc/clickhouse-server/users.d/overrides.yml:/etc/clickhouse-server/users.d/overrides.yml
-        depends_on:
-            - keeper-standalone
-            - keeper1
-            - keeper2
-            - keeper3
-            - raftkeeper-standalone
-            - raftkeeper1
-            - raftkeeper2
-            - raftkeeper3
-            - zookeeper-standalone
-            - zookeeper1
-            - zookeeper2
-            - zookeeper3
-
     server1:
         extends: server-base
         # For static replicas (since we use $HOSTNAME)
         hostname: server1
         volumes:
             - ./data/clickhouse-server1:/var/lib/clickhouse
+        <<: *x-depends_on
     server2:
         extends: server-base
         # For static replicas (since we use $HOSTNAME)
         hostname: server2
         volumes:
             - ./data/clickhouse-server2:/var/lib/clickhouse
+        <<: *x-depends_on
 
     #
     # RaftKeeper
