@@ -167,45 +167,60 @@ services:
             - /bin/sh
             - -c
             - |
+                start_timestamp=$(date +%s)
+                echo "Started at $(date -d@$$start_timestamp)"
+
                 # RaftKeeper
-                /scripts/benchmark.sh server1 server1 raftkeeper-standalone raftkeeper_standalone
-                /scripts/benchmark.sh server1 server1 raftkeeper1 raftkeeper_cluster
+                /scripts/benchmark.sh "ClickHouse x1 + RaftKeeper x1" server1 server1 raftkeeper-standalone raftkeeper_standalone
+                /scripts/benchmark.sh "ClickHouse x1 + RaftKeeper x3" server1 server1 raftkeeper1 raftkeeper_cluster
 
-                /scripts/benchmark.sh server1 default raftkeeper-standalone raftkeeper_standalone
-                /scripts/benchmark.sh server1 default raftkeeper1 raftkeeper_cluster
+                /scripts/benchmark.sh "ClickHouse x2 + RaftKeeper x1" server1 default raftkeeper-standalone raftkeeper_standalone
+                /scripts/benchmark.sh "ClickHouse x2 + RaftKeeper x3" server1 default raftkeeper1 raftkeeper_cluster
 
-                /scripts/benchmark.sh server1 server1 raftkeeper-standalone raftkeeper_standalone --concurrency 32
-                /scripts/benchmark.sh server1 server1 raftkeeper1 raftkeeper_cluster --concurrency 32
+                /scripts/benchmark.sh "ClickHouse x1 + RaftKeeper x1 (concurrency 32)" server1 server1 raftkeeper-standalone raftkeeper_standalone --concurrency 32
+                /scripts/benchmark.sh "ClickHouse x1 + RaftKeeper x3 (concurrency 32)" server1 server1 raftkeeper1 raftkeeper_cluster --concurrency 32
 
-                /scripts/benchmark.sh server1 default raftkeeper-standalone raftkeeper_standalone --concurrency 32
-                /scripts/benchmark.sh server1 default raftkeeper1 raftkeeper_cluster --concurrency 32
+                /scripts/benchmark.sh "ClickHouse x2 + RaftKeeper x1 (concurrency 32)" server1 default raftkeeper-standalone raftkeeper_standalone --concurrency 32
+                /scripts/benchmark.sh "ClickHouse x2 + RaftKeeper x3 (concurrency 32)" server1 default raftkeeper1 raftkeeper_cluster --concurrency 32
 
                 # Keeper
-                /scripts/benchmark.sh server1 server1 keeper-standalone keeper_standalone
-                /scripts/benchmark.sh server1 server1 keeper1 keeper_cluster
+                /scripts/benchmark.sh "ClickHouse x1 + Keeper 23.12 x1" server1 server1 keeper-standalone keeper_standalone
+                /scripts/benchmark.sh "ClickHouse x1 + Keeper 23.12 x3" server1 server1 keeper1 keeper_cluster
 
-                /scripts/benchmark.sh server1 default keeper-standalone keeper_standalone
-                /scripts/benchmark.sh server1 default keeper1 keeper_cluster
+                /scripts/benchmark.sh "ClickHouse x2 + Keeper 23.12 x1" server1 default keeper-standalone keeper_standalone
+                /scripts/benchmark.sh "ClickHouse x2 + Keeper 23.12 x3" server1 default keeper1 keeper_cluster
 
-                /scripts/benchmark.sh server1 server1 keeper-standalone keeper_standalone --concurrency 32
-                /scripts/benchmark.sh server1 server1 keeper1 keeper_cluster --concurrency 32
+                /scripts/benchmark.sh "ClickHouse x1 + Keeper 23.12 x1 (concurrency 32)" server1 server1 keeper-standalone keeper_standalone --concurrency 32
+                /scripts/benchmark.sh "ClickHouse x1 + Keeper 23.12 x3 (concurrency 32)" server1 server1 keeper1 keeper_cluster --concurrency 32
 
-                /scripts/benchmark.sh server1 default keeper-standalone keeper_standalone --concurrency 32
-                /scripts/benchmark.sh server1 default keeper1 keeper_cluster --concurrency 32
+                /scripts/benchmark.sh "ClickHouse x2 + Keeper 23.12 x1 (concurrency 32)" server1 default keeper-standalone keeper_standalone --concurrency 32
+                /scripts/benchmark.sh "ClickHouse x2 + Keeper 23.12 x3 (concurrency 32)" server1 default keeper1 keeper_cluster --concurrency 32
 
                 # ZooKeeper
                 # run tests for ZooKeeper on server2 to have separate system.zookeeper_log
-                /scripts/benchmark.sh server2 server2 zookeeper-standalone zookeeper_standalone
-                /scripts/benchmark.sh server2 server2 zookeeper1 zookeeper_cluster
+                /scripts/benchmark.sh "ClickHouse x1 + ZooKeeper 3.8 x1" server2 server2 zookeeper-standalone zookeeper_standalone
+                /scripts/benchmark.sh "ClickHouse x1 + ZooKeeper 3.8 x3" server2 server2 zookeeper1 zookeeper_cluster
 
-                /scripts/benchmark.sh server2 default zookeeper-standalone zookeeper_standalone
-                /scripts/benchmark.sh server2 default zookeeper1 zookeeper_cluster
+                /scripts/benchmark.sh "ClickHouse x2 + ZooKeeper 3.8 x1" server2 default zookeeper-standalone zookeeper_standalone
+                /scripts/benchmark.sh "ClickHouse x2 + ZooKeeper 3.8 x3" server2 default zookeeper1 zookeeper_cluster
 
-                /scripts/benchmark.sh server2 server2 zookeeper-standalone zookeeper_standalone --concurrency 32
-                /scripts/benchmark.sh server2 server2 zookeeper1 zookeeper_cluster --concurrency 32
+                /scripts/benchmark.sh "ClickHouse x1 + ZooKeeper 3.8 x1 (concurrency 32)" server2 server2 zookeeper-standalone zookeeper_standalone --concurrency 32
+                /scripts/benchmark.sh "ClickHouse x1 + ZooKeeper 3.8 x3 (concurrency 32)" server2 server2 zookeeper1 zookeeper_cluster --concurrency 32
 
-                /scripts/benchmark.sh server2 default zookeeper-standalone zookeeper_standalone --concurrency 32
-                /scripts/benchmark.sh server2 default zookeeper1 zookeeper_cluster --concurrency 32
+                /scripts/benchmark.sh "ClickHouse x2 + ZooKeeper 3.8 x1 (concurrency 32)" server2 default zookeeper-standalone zookeeper_standalone --concurrency 32
+                /scripts/benchmark.sh "ClickHouse x2 + ZooKeeper 3.8 x3 (concurrency 32)" server2 default zookeeper1 zookeeper_cluster --concurrency 32
+
+                # Results
+                clickhouse-client --host "server1" --format Markdown -q "
+                    SELECT
+                        replaceOne(splitByString(', ', log_comment)[1], 'test_name=', '') AS test_name,
+                        dateDiff('second', min(event_time), max(event_time)) AS duration,
+                        quantileExact(0.99)(query_duration_ms) AS max_latency
+                    FROM clusterAllReplicas(default, system.query_log)
+                    WHERE log_comment LIKE 'test_name%' AND event_time >= fromUnixTimestamp($$start_timestamp)
+                    GROUP BY 1
+                    ORDER BY min(event_time) ASC
+                "
         depends_on:
             - server1
             - server2

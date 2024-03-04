@@ -53,12 +53,15 @@ function wait_table_initialized()
 
 function main()
 {
+    local test_name="$1" && shift
     local server="$1" && shift
     local cluster="$1" && shift
     local zookeeper_host="$1" && shift
     local zookeeper_name="$1" && shift
 
-    echo "* Running benchmark: server=$server, cluster=$cluster, zookeeper_host=$zookeeper_host, zookeeper_name=$zookeeper_name, clickhouse-benchmark options=$*"
+    local benchmark_description
+    benchmark_description="test_name=$test_name, start_timestamp=$(date +%s), server=$server, cluster=$cluster, zookeeper_host=$zookeeper_host, zookeeper_name=$zookeeper_name, clickhouse-benchmark options=$*"
+    echo "* Running benchmark: $benchmark_description"
 
     wait_server_initialized "$server" "$cluster" "$zookeeper_name" || return
 
@@ -95,7 +98,7 @@ function main()
         --insert_deduplicate 0
         --insert_keeper_max_retries 0
 
-        --log_comment "server=$server, cluster=$cluster, zookeeper_host=$zookeeper_host, zookeeper_name=$zookeeper_name, clickhouse-benchmark options=$*"
+        --log_comment "$benchmark_description"
     )
     # NOTE: maybe in the meantime spawn chdig to show the queries?
     # NOTE: also we can calculate ZooKeeper metrics from system.zookeeper or via statistics from the ZooKeeper/Keeper
