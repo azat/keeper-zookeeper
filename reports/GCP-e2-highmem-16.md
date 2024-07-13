@@ -1,8 +1,10 @@
-OS: Ubuntu 22.04.3 LTS x86_64
-Host: Google Compute Engine
-Kernel: 6.2.0-1014-gcp
-CPU: AMD EPYC 7B12 (16) @ 2.249GHz
-Memory: 502MiB / 128802MiB
+### Env
+
+- OS: Ubuntu 22.04.3 LTS x86_64
+- Host: Google Compute Engine
+- Kernel: 6.2.0-1014-gcp
+- CPU: AMD EPYC 7B12 (16) @ 2.249GHz
+- Memory: 502MiB / 128802MiB
 
 This is the comparison of ClickHouse Keeper vs ZooKeeper under ClickHouse load:
 
