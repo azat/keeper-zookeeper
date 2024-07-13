@@ -211,7 +211,9 @@ services:
                 /scripts/benchmark.sh "ClickHouse x2 + ZooKeeper 3.8 x3 (concurrency 32)" server2 default zookeeper1 zookeeper_cluster --concurrency 32
 
                 # Results
-                clickhouse-client --host "server1" --format Markdown -q "
+                clickhouse-client --host "server1" -nm --format Markdown -q "
+                    SYSTEM FLUSH LOGS;
+
                     SELECT
                         replaceOne(splitByString(', ', log_comment)[1], 'test_name=', '') AS test_name,
                         dateDiff('second', min(event_time), max(event_time)) AS duration,
