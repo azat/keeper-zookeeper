@@ -160,7 +160,7 @@ services:
     # Benchmark
     #
     benchmark:
-        image: clickhouse/clickhouse-server:24.8
+        image: clickhouse/clickhouse-server
         volumes:
             - ./scripts:/scripts:ro
         command:

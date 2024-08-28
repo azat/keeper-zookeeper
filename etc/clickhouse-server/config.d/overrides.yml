@@ -8,8 +8,6 @@ logger:
 # not as wide as in ZooKeeper (tested on 3.7 version).
 zookeeper_log: {}
 
-max_concurrent_queries: 200
-
 # for ON CLUSTER
 zookeeper:
     - node:
