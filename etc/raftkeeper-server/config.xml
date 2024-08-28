@@ -16,8 +16,8 @@
 
     <logger>
         <level>information</level>
-        <log>/var/lib/clickhouse/clickhouse-keeper.log</log>
-        <errorlog>/dev/null</errorlog>
+        <path>/var/lib/clickhouse/raftkeeper.log</path>
+        <err_log_path>/dev/null</err_log_path>
         <console>0</console>
     </logger>
 </raftkeeper>
