@@ -2,4 +2,5 @@
 profiles:
     default:
         fsync_metadata: 0
+        max_concurrent_queries_for_user: 200
         database_atomic_wait_for_drop_and_detach_synchronously: 1
