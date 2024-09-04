@@ -14,30 +14,30 @@ This is the comparison of ClickHouse Keeper vs ZooKeeper under ClickHouse load:
 
 | test_name | duration | max_latency |
 |:-|-:|-:|
-| ClickHouse x1 + RaftKeeper x1 | 93 | 4608 |
-| ClickHouse x1 + RaftKeeper x3 | 92 | 3251 |
-| ClickHouse x2 + RaftKeeper x1 | 99 | 3801 |
-| ClickHouse x2 + RaftKeeper x3 | 95 | 3323 |
-| ClickHouse x1 + RaftKeeper x1 (concurrency 32) | 2 | 2541 |
-| ClickHouse x1 + RaftKeeper x3 (concurrency 32) | 3 | 2553 |
-| ClickHouse x2 + RaftKeeper x1 (concurrency 32) | 3 | 2581 |
-| ClickHouse x2 + RaftKeeper x3 (concurrency 32) | 3 | 2626 |
-| ClickHouse x1 + Keeper 23.12 x1 | 84 | 3131 |
-| ClickHouse x1 + Keeper 23.12 x3 | 159 | 5624 |
-| ClickHouse x2 + Keeper 23.12 x1 | 93 | 3242 |
-| ClickHouse x2 + Keeper 23.12 x3 | 183 | 7384 |
-| ClickHouse x1 + Keeper 23.12 x1 (concurrency 32) | 4 | 3536 |
-| ClickHouse x1 + Keeper 23.12 x3 (concurrency 32) | 8 | 8535 |
-| ClickHouse x2 + Keeper 23.12 x1 (concurrency 32) | 3 | 3211 |
-| ClickHouse x2 + Keeper 23.12 x3 (concurrency 32) | 8 | 8034 |
-| ClickHouse x1 + ZooKeeper 3.8 x1 | 23 | 827 |
-| ClickHouse x1 + ZooKeeper 3.8 x3 | 39 | 1471 |
-| ClickHouse x2 + ZooKeeper 3.8 x1 | 26 | 854 |
-| ClickHouse x2 + ZooKeeper 3.8 x3 | 47 | 1690 |
-| ClickHouse x1 + ZooKeeper 3.8 x1 (concurrency 32) | 2 | 2066 |
-| ClickHouse x1 + ZooKeeper 3.8 x3 (concurrency 32) | 4 | 4170 |
-| ClickHouse x2 + ZooKeeper 3.8 x1 (concurrency 32) | 2 | 2092 |
-| ClickHouse x2 + ZooKeeper 3.8 x3 (concurrency 32) | 4 | 4005 |
+| ClickHouse x1 + RaftKeeper 2.1.1 x1 | 96 | 3392 |
+| ClickHouse x1 + RaftKeeper 2.1.1 x3 | 97 | 3361 |
+| ClickHouse x2 + RaftKeeper 2.1.1 x1 | 98 | 3609 |
+| ClickHouse x2 + RaftKeeper 2.1.1 x3 | 95 | 3430 |
+| ClickHouse x1 + RaftKeeper 2.1.1 x1 (concurrency 32) | 3 | 2613 |
+| ClickHouse x1 + RaftKeeper 2.1.1 x3 (concurrency 32) | 3 | 2582 |
+| ClickHouse x2 + RaftKeeper 2.1.1 x1 (concurrency 32) | 3 | 2603 |
+| ClickHouse x2 + RaftKeeper 2.1.1 x3 (concurrency 32) | 3 | 2595 |
+| ClickHouse x1 + Keeper 24.6 x1 | 87 | 3220 |
+| ClickHouse x1 + Keeper 24.6 x3 | 163 | 5749 |
+| ClickHouse x2 + Keeper 24.6 x1 | 93 | 3268 |
+| ClickHouse x2 + Keeper 24.6 x3 | 198 | 8777 |
+| ClickHouse x1 + Keeper 24.6 x1 (concurrency 32) | 4 | 3578 |
+| ClickHouse x1 + Keeper 24.6 x3 (concurrency 32) | 8 | 7419 |
+| ClickHouse x2 + Keeper 24.6 x1 (concurrency 32) | 3 | 3251 |
+| ClickHouse x2 + Keeper 24.6 x3 (concurrency 32) | 8 | 8377 |
+| ClickHouse x1 + ZooKeeper 3.8 x1 | 22 | 761 |
+| ClickHouse x1 + ZooKeeper 3.8 x3 | 38 | 1393 |
+| ClickHouse x2 + ZooKeeper 3.8 x1 | 25 | 859 |
+| ClickHouse x2 + ZooKeeper 3.8 x3 | 48 | 1684 |
+| ClickHouse x1 + ZooKeeper 3.8 x1 (concurrency 32) | 3 | 2442 |
+| ClickHouse x1 + ZooKeeper 3.8 x3 (concurrency 32) | 5 | 4938 |
+| ClickHouse x2 + ZooKeeper 3.8 x1 (concurrency 32) | 2 | 2769 |
+| ClickHouse x2 + ZooKeeper 3.8 x3 (concurrency 32) | 4 | 4115 |
 
 *Please submit pull requests for newer versions of ClickHouse Keeper (note, that it does not make a lot of sense to try newer ClickHouse Server)*
 
